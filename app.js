@@ -19,7 +19,7 @@ const app = express();
 
 // CONNECTING TO THE MONGODB
 mongoose.Promise = Promise;
-mongoose.connect('mongodb://localhost/hackbook', {
+mongoose.connect(process.env.MONGODB_URI, {
   keepAlive: true,  // keeps connection open
   reconnectTries: Number.MAX_VALUE
 });
@@ -27,7 +27,7 @@ mongoose.connect('mongodb://localhost/hackbook', {
 // APP.USE (Binding app-level middlewares to an instance of the app object)
 app.use(cors({
   credentials: true,   // notify clients whether "credentials" (including Cookies and HTTP Authentication data) should be sent with requests.
-  origin: ['http://localhost:4200']
+  origin: [process.env.CLIENT_URL]
 }));
 
 app.use(session({
