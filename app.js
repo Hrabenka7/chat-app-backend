@@ -9,6 +9,8 @@ const mongoose = require('mongoose'); // object modeling tool for MongoDb
 const session = require('express-session'); //  to store and access user data as they browse the app 
 const MongoStore = require('connect-mongo')(session); // stores sessions in the "sessions" collection by default
 
+require('dotenv').config();
+
 // ROUTERS
 const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
