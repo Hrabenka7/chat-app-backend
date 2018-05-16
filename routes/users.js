@@ -15,36 +15,28 @@ router.get("/:id", (req, res, next) => {
 });
 
 /* #################################### EDIT profile page ######################## */
-router.put("/:id", (req, res, next) => {
+router.put("/me", (req, res, next) => {
+   if (!req.session.currentUser) {
+    return res.status(401).json({ code: 'unauthorized' });
+  }
   // save body values into a new object newData
   const newData = {
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     cohort: req.body.cohort
   }
-  
+  const updates = {
+    $set: newData
+  };
   const options = {
     new: true
-  }
+  };
 
   // find the user based on his id from url
-  User.findById(req.params.id)
+  User.findOneAndUpdate({_id: req.session.currentUser}, updates, options)
     .then((result) => {
-      // no user with such id
-      if (!result) {
-        return res.status(404).json({ code: 'not-found' });
-      }
-      // else rewrite the old data with the new data
-      result.firstName = newData.firstName;
-      result.lastName = newData.lastName;
-      result.cohort = newData.cohort;
-
-      // and save to db
-      result.save()
-        .then(() => {
-          res.json(result);
-        })
-        .catch(next);
+      req.session.currentUser = result;
+      res.json(result);
     })
     .catch(next)
 });
