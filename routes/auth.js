@@ -14,14 +14,14 @@ router.post('/signup', (req, res, next) => {
     return res.status(401).json({ code: 'unauthorized' });
   }
   // else store sent values in constants
-  const firstName = req.body.firstName;
-  const lastName = req.body.lastName;
+  const name = req.body.name;
+  const cityOfResidence = req.body.cityOfResidence;
   const email = req.body.email;
   const password = req.body.password;
   const cohort = req.body.cohort;
 
   // if all fields DO NOT have value, trow validation error
-  if (!firstName || !lastName || !email || !password) {
+  if (!name || !cityOfResidence || !email || !password || !cohort) {
     return res.status(422).json({ code: 'validation' });
   }
 
@@ -39,8 +39,8 @@ router.post('/signup', (req, res, next) => {
 
       // make new User, storing filled values (if names of fields and a consts match, just list them)
       const newUser = User({
-        firstName,
-        lastName,
+        name,
+        cityOfResidence,
         email,
         password: hashPass,
         cohort

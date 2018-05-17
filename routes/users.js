@@ -21,9 +21,14 @@ router.put("/me", (req, res, next) => {
   }
   // save body values into a new object newData
   const newData = {
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    cohort: req.body.cohort
+    name: req.body.name,
+    cohort: req.body.cohort,
+    cityOfResidence: req.body.cityOfResidence,
+    work: req.body.work,
+    about: req.body.about,
+    likes: req.body.likes,
+    myStory: req.body.myStory,
+
   }
   const updates = {
     $set: newData
@@ -40,5 +45,9 @@ router.put("/me", (req, res, next) => {
     })
     .catch(next)
 });
+
+
+// ####################################### UPDATE USER ############################ //
+
 
 module.exports = router;
