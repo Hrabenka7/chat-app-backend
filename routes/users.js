@@ -28,8 +28,9 @@ router.put("/me", (req, res, next) => {
     about: req.body.about,
     likes: req.body.likes,
     myStory: req.body.myStory,
-
+    skills: req.body.skills
   }
+
   const updates = {
     $set: newData
   };
@@ -44,10 +45,32 @@ router.put("/me", (req, res, next) => {
       res.json(result);
     })
     .catch(next)
-});
+    
+    User.findOneAndUpdate({ _id: req.session.currentUser }, { $addToSet: { skills: req.body.skills }}, options)
+  });
+  
+
+  // ####################################### ADD NEW SKILL ############################ //
+    
+  router.put("/edit-my-skills", (req, res, next) => {
+    if (!req.session.currentUser) {
+      return res.status(401).json({ code: 'unauthorized' });
+    }
+  
+    const options = {
+      new: true
+    };
+
+    // find the user based on his id from url and add new skill
+    User.findOneAndUpdate({ _id: req.session.currentUser._id }, { $push: { skills: req.body.newSkill } }, options)
+      .then((result) => {
+        req.session.currentUser = result;
+        res.json(result);
+      })
+      .catch(next)
+  });
 
 
-// ####################################### UPDATE USER ############################ //
 
 
 module.exports = router;

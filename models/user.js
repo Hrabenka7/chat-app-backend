@@ -17,6 +17,8 @@ const userSchema = new Schema({
   likes: {type: String, default: '...'},
   myStory: {type: String, default: '...'},
 
+  skills: [String]
+
 })
 
 const User = mongoose.model('User', userSchema);
