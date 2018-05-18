@@ -28,25 +28,25 @@ router.put("/me", (req, res, next) => {
     about: req.body.about,
     likes: req.body.likes,
     myStory: req.body.myStory,
-    skills: req.body.skills
+    skills: req.body.skills // ref. input "name"; profile.component.html 
   }
 
   const updates = {
-    $set: newData
-  };
-  const options = {
-    new: true
+    $set: newData      // mongodb $set operator replace value of a field(s)
   };
 
-  // find the user based on his id from url
+  const options = {
+    new: true         // by default, mongoose returns the old object. Setting options to "new:true" returns UPDATED object.  
+  };
+
+  // find the user based on his id taken from session and replace the first one matching
   User.findOneAndUpdate({_id: req.session.currentUser}, updates, options)
     .then((result) => {
-      req.session.currentUser = result;
+      req.session.currentUser = result;  // updates the user in session !important for the /me request
       res.json(result);
     })
     .catch(next)
     
-    User.findOneAndUpdate({ _id: req.session.currentUser }, { $addToSet: { skills: req.body.skills }}, options)
   });
   
 
@@ -61,16 +61,15 @@ router.put("/me", (req, res, next) => {
       new: true
     };
 
-    // find the user based on his id from url and add new skill
-    User.findOneAndUpdate({ _id: req.session.currentUser._id }, { $push: { skills: req.body.newSkill } }, options)
+    // find the user based on his id from session and add new skill
+    //@todo DO NOT ALLOW SAVE DUPLICATES
+    User.findOneAndUpdate({ _id: req.session.currentUser._id }, { push: { skills: req.body.newSkill } }, options)
       .then((result) => {
         req.session.currentUser = result;
         res.json(result);
       })
       .catch(next)
   });
-
-
 
 
 module.exports = router;
