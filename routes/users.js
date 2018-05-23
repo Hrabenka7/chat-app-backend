@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 
 const User = require('../models/user')
+const upload = require('../configs/cloudinary');
 
 /* ######################################  GET profile page. ##########################*/
 // find the User based on his id read from the url
@@ -50,26 +51,24 @@ router.put("/me", (req, res, next) => {
   });
   
 
-  // ####################################### ADD NEW SKILL ############################ //
-    
-  router.put("/edit-my-skills", (req, res, next) => {
-    if (!req.session.currentUser) {
-      return res.status(401).json({ code: 'unauthorized' });
-    }
-  
-    const options = {
-      new: true
-    };
+// ---------- UPLOAD USER PICTURE --------- //
+  router.put('/me/picture', upload.single('image'), function (req, res, next) {
+    console.log(req.file)
+    const image = req.file.url
+    const userId = req.session.currentUser._id;
 
-    // find the user based on his id from session and add new skill
-    //@todo DO NOT ALLOW SAVE DUPLICATES
-    User.findOneAndUpdate({ _id: req.session.currentUser._id }, { push: { skills: req.body.newSkill } }, options)
+    if (!image) {
+      res.status(422).json({ code: "unprocessable-entity" })
+    }
+
+    User.findByIdAndUpdate(userId, { picture: image }, { new: true })
       .then((result) => {
         req.session.currentUser = result;
         res.json(result);
       })
-      .catch(next)
+      .catch(next);
   });
+
 
 
 module.exports = router;
